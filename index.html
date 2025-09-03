@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Central de Certificados de Formações da GEECT</title>
+
+    <!-- Bootstrap & Ícones -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      :root {
+        --primary-color: #1e3a8a;
+        --secondary-color: #3b82f6;
+        --accent-color: #f59e0b;
+        --background-color: #ffffff;
+        --section-bg: #f8fafc;
+        --text-color: #1f2937;
+        --btn-color: #1e3a8a;
+        --border-color: #e5e7eb;
+      }
+      * { box-sizing: border-box; margin:0; padding:0 }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f8fafc;
+        color: var(--text-color);
+        display: flex; flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* FORMULÁRIO */
+      .search-section {
+        padding: 60px 15px 40px;
+        text-align: center;
+        background: var(--section-bg);
+        margin: 0;
+      }
+      .section-wrapper h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+      }
+      .section-wrapper p {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .accent-bar {
+        width: 80px;
+        height: 4px;
+        background: var(--accent-color);
+        margin: 24px auto 0;
+        border-radius: 9999px;
+      }
+      .search-container {
+        max-width: 500px;
+        margin: 32px auto;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        background: var(--background-color);
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .input-container {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      #search_input {
+        width: 200px;
+        font-size: 14px;
+      }
+      #search_type {
+        width: 80px;
+        font-size: 14px;
+      }
+      .form-control, .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: #fff;
+      }
+      .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        outline: none;
+      }
+      .btn-custom {
+        background: var(--btn-color);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        min-width: 110px;
+        font-size: 14px;
+        box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+        transition: all 0.3s ease;
+      }
+      .btn-custom:hover {
+        background: var(--primary-color);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(30, 58, 138, 0.3);
+      }
+
+      /* LOADER */
+      .text-center#loader-container { margin:20px 0 40px }
+      #loader {
+        width:3rem; height:3rem;
+        border-width:.25em;
+        color: var(--secondary-color);
+      }
+
+      /* RESULTADOS EM TABELA */
+      #results-container {
+        padding:0 15px 40px;
+      }
+      .result-wrapper {
+        max-width: 1200px;
+        margin: 0 auto 32px;
+        background: var(--background-color);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid var(--border-color);
+      }
+      .user-info-header {
+        background: var(--primary-color);
+        color: #fff;
+        padding: 16px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+      }
+      .user-info-header i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+      }
+      .certificate-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--background-color);
+      }
+      .certificate-table thead {
+        background: #f8fafc;
+      }
+      .certificate-table th {
+        padding: 16px 12px;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-align: center;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--border-color);
+      }
+      .certificate-table td {
+        padding: 16px 12px;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .certificate-table tbody tr:hover {
+        background: #f8fafc;
+        transition: background 0.2s ease;
+      }
+      
+      /* Estilo para situação */
+      .situacao-ok {
+        color: #065f46;
+        background: #d1fae5;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.75rem;
+      }
+      .situacao-pendente {
+        color: #92400e;
+        background: #fef3c7;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.75rem;
+      }
+      .situacao-outras {
+        color: #374151;
+        background: #f3f4f6;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.75rem;
+      }
+
+      /* RODAPÉ */
+      .footer {
+        margin-top: auto;
+        background: var(--primary-color);
+        color: #fff;
+        padding: 32px 0;
+        font-size: 0.875rem;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer h5 {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        color: #e2e8f0;
+      }
+      .footer a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+      .footer a:hover {
+        color: #fbbf24;
+        text-decoration: underline;
+      }
+
+      /* BANNER */
+      .banner-container {
+        width: 100%;
+        text-align: center;
+        background: var(--background-color);
+        padding: 30px 0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        margin-bottom: 0;
+      }
+      .banner-img {
+        max-width: 100%;
+        height: auto;
+        max-height: 180px;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+
+      /* RESPONSIVO */
+      @media(max-width:768px) {
+        .search-container {
+          flex-direction: column;
+          padding: 20px;
+          margin: 24px 16px;
+        }
+        .input-container {
+          flex-direction: column;
+          width: 100%;
+        }
+        #search_input, #search_type { 
+          width: 100%;
+        }
+        .banner-img { max-height: 150px }
+        .section-wrapper h2 { font-size: 20px }
+        .search-section { padding: 40px 15px 32px }
+        .result-wrapper { 
+          margin: 0 16px 24px;
+          overflow-x: auto;
+        }
+        .certificate-table {
+          min-width: 800px;
+        }
+        .certificate-table th,
+        .certificate-table td {
+          padding: 12px 8px;
+          font-size: 0.7rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- BANNER -->
+    <div class="banner-container">
+      <img src="https://i.postimg.cc/KcsrXZPJ/GEEP-SEE-GOV.png" alt="Banner ParaíbaTEC" class="banner-img">
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <section class="search-section">
+      <div class="section-wrapper">
+        <h2>CENTRAL DE CERTIFICADOS DAS FORMAÇÕES</h2>
+        <p>Digite o seu CPF ou código INEP da escola para consultar certificados</p>
+        <p style="font-size: 0.7rem;">Caso não encontre o certificado ou ele possua alguma divergência de informação, entre em contato pelo e-mail geect@see.pb.gov.br</p>
+        <div class="accent-bar"></div>
+      </div>
+      <div class="search-container">
+        <div class="input-container">
+          <select id="search_type" class="form-select">
+            <option value="cpf">CPF</option>
+            <option value="inep">INEP</option>
+          </select>
+          <input
+            type="text" id="search_input"
+            class="form-control"
+            placeholder="Digite o CPF ou INEP"
+            oninput="formatInput()"
+          />
+        </div>
+        <button class="btn btn-custom" onclick="buscarCertificados()">
+          <i class="fas fa-search"></i> Buscar
+        </button>
+      </div>
+      <div id="loader-container" class="text-center">
+        <div id="loader" class="spinner-border d-none" role="status"></div>
+      </div>
+    </section>
+
+    <!-- RESULTADOS -->
+    <div id="results-container"></div>
+
+    <!-- RODAPÉ -->
+    <footer class="footer">
+      <div class="footer" style="font-size: 10px; text-align: center;">
+        Governo do Estado da Paraíba<br />
+        Secretaria de Estado da Educação - SEE<br />
+        Gerência Executiva de Educação das Escolas Cidadãs Técnicas - GEECT<br />
+        Coordenação Geral do ParaíbaTEC e PRONATEC-PB<br />
+        Av. João da Mata, s/n - Bloco I - 5º Andar, Jaguaribe - João Pessoa/PB CEP
+        58015-900<br />
+        E-mail: geect@see.pb.gov.br<br />
+        Telefone: (83) 99144-1013<br />
+        <a href="http://paraiba.pb.gov.br/diretas/secretaria-da-educacao"
+          >paraiba.pb.gov.br/diretas/secretaria-da-educacao</a
+        >
+      </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // IMPORTANTE: Substitua esta URL pela URL da sua API do Google Apps Script
+      const API_URL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID_AQUI/exec';
+
+      // Formatação dinâmica baseada no tipo
+      function formatInput() {
+        const input = document.getElementById("search_input");
+        const type = document.getElementById("search_type").value;
+        
+        let value = input.value.replace(/\D/g, "");
+        
+        if (type === "cpf") {
+          value = value.slice(0, 11);
+          input.value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+          input.placeholder = "000.000.000-00";
+        } else {
+          value = value.slice(0, 8);
+          input.value = value;
+          input.placeholder = "12345678";
+        }
+      }
+
+      // Atualizar placeholder quando trocar tipo
+      document.getElementById("search_type").addEventListener("change", function() {
+        const input = document.getElementById("search_input");
+        input.value = "";
+        formatInput();
+      });
+
+      // Alertas
+      function showAlert(msg) {
+        Swal.fire({
+          icon: "warning",
+          title: "Atenção",
+          text: msg,
+          confirmButtonColor: '#1e3a8a'
+        });
+      }
+
+      function showError(msg) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: msg,
+          timer: 4000,
+          confirmButtonColor: '#1e3a8a'
+        });
+      }
+
+      function showSuccess(msg) {
+        Swal.fire({
+          icon: "success",
+          title: "Sucesso",
+          text: msg,
+          timer: 3000,
+          confirmButtonColor: '#1e3a8a'
+        });
+      }
+
+      // Formatar situação com cores
+      function formatSituacao(situacao) {
+        const situacaoLower = situacao.toLowerCase();
+        
+        if (situacaoLower.includes('ok') || situacaoLower.includes('aprovado') || situacaoLower.includes('concluído')) {
+          return `<span class="situacao-ok">${situacao}</span>`;
+        } else if (situacaoLower.includes('pendente') || situacaoLower.includes('aguardando')) {
+          return `<span class="situacao-pendente">${situacao}</span>`;
+        } else {
+          return `<span class="situacao-outras">${situacao}</span>`;
+        }
+      }
+
+      // Criar tabela de resultados
+      function createResultTable(dados) {
+        if (!dados || dados.length === 0) return null;
+
+        // Pegar informações do primeiro registro para o cabeçalho
+        const firstRecord = dados[0];
+        const headerInfo = firstRecord.nome ? 
+          `<i class="fas fa-user"></i>${firstRecord.nome}` : 
+          `<i class="fas fa-school"></i>${firstRecord.escola || 'Escola não informada'}`;
+
+        let html = `
+          <div class="result-wrapper">
+            <div class="user-info-header">${headerInfo}</div>
+            <table class="certificate-table">
+              <thead>
+                <tr>
+                  <th>INEP</th>
+                  <th>Escola</th>
+                  <th>CPF</th>
+                  <th>Nome</th>
+                  <th>Agência</th>
+                  <th>Conta</th>
+                  <th>Variação</th>
+                  <th>Situação</th>
+                  <th>Orientação</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        dados.forEach(item => {
+          html += `
+            <tr>
+              <td>${item.inep || '-'}</td>
+              <td>${item.escola || '-'}</td>
+              <td>${item.cpf || '-'}</td>
+              <td>${item.nome || '-'}</td>
+              <td>${item.agencia || '-'}</td>
+              <td>${item.conta || '-'}</td>
+              <td>${item.variacao || '-'}</td>
+              <td>${formatSituacao(item.situacao || '-')}</td>
+              <td>${item.orientacao || '-'}</td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        return html;
+      }
+
+      // Função principal de busca
+      async function buscarCertificados() {
+        const searchInput = document.getElementById("search_input").value;
+        const searchType = document.querySelector('input[name="search_type"]:checked').value;
+        const loader = document.getElementById("loader");
+        const resultsContainer = document.getElementById("results-container");
+
+        // Validações
+        if (!searchInput.trim()) {
+          showAlert(`Digite ${searchType === 'cpf' ? 'um CPF' : 'um INEP'} para realizar a busca.`);
+          return;
+        }
+
+        const cleanValue = searchInput.replace(/\D/g, "");
+        
+        if (searchType === 'cpf' && cleanValue.length !== 11) {
+          showAlert("CPF deve ter 11 dígitos.");
+          return;
+        }
+        
+        if (searchType === 'inep' && cleanValue.length !== 8) {
+          showAlert("INEP deve ter 8 dígitos.");
+          return;
+        }
+
+        // Mostrar loader
+        loader.classList.remove("d-none");
+        resultsContainer.innerHTML = "";
+
+        try {
+          // Construir URL da API baseada no tipo selecionado
+          const apiUrl = `${API_URL}?${searchType}=${cleanValue}`;
+          
+          // Fazer requisição para a API
+          const response = await fetch(apiUrl);
+
+          if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          // Esconder loader
+          loader.classList.add("d-none");
+
+          if (!result.success) {
+            showError(result.error || "Erro ao buscar dados.");
+            return;
+          }
+
+          if (result.data.length === 0) {
+            showError(`${searchType === 'cpf' ? 'CPF' : 'INEP'} não encontrado na base de dados.`);
+            return;
+          }
+
+          // Criar tabela de resultados
+          const resultTable = createResultTable(result.data);
+
+          if (resultTable === null) {
+            showError("Erro ao processar os dados retornados.");
+          } else {
+            resultsContainer.innerHTML = resultTable;
+            showSuccess(`${result.data.length} registro(s) encontrado(s)!`);
+          }
+
+        } catch (error) {
+          console.error('Erro na requisição:', error);
+          loader.classList.add("d-none");
+          showError("Erro de conexão. Tente novamente mais tarde.");
+        }
+      }
+
+      // Enter = buscar
+      document.getElementById("search_input")
+        .addEventListener("keypress", e => {
+          if (e.key === "Enter") buscarCertificados();
+        });
+
+      // Verificar se API está configurada
+      document.addEventListener('DOMContentLoaded', function() {
+        if (API_URL.includes('SEU_SCRIPT_ID_AQUI')) {
+          console.warn('⚠️ CONFIGURE A URL DA API NO CÓDIGO!');
+        }
+      });
+    </script>
+  </body>
+</html>
