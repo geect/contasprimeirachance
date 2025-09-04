@@ -207,32 +207,6 @@
         transition: background 0.2s ease;
       }
 
-      /* Estilo para situação */
-      .situacao-ok {
-        color: #065f46;
-        background: #d1fae5;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.75rem;
-      }
-      .situacao-pendente {
-        color: #92400e;
-        background: #fef3c7;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.75rem;
-      }
-      .situacao-outras {
-        color: #374151;
-        background: #f3f4f6;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.75rem;
-      }
-
       /* RODAPÉ */
       .footer {
         margin-top: auto;
@@ -489,7 +463,6 @@
                   <th>Nome</th>
                   <th>Agência</th>
                   <th>Conta</th>
-                  <th>Situação</th>
                   <th>Orientação</th>
                 </tr>
               </thead>
@@ -505,7 +478,6 @@
               <td>${item.nome || '-'}</td>
               <td>${item.agencia || '-'}</td>
               <td>${item.conta || '-'}</td>
-              <td>${formatSituacao(item.situacao || '-')}</td>
               <td>${item.orientacao || '-'}</td>
             </tr>
           `;
