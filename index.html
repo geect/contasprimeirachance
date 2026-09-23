@@ -207,6 +207,21 @@
         transition: background 0.2s ease;
       }
 
+      /* LINK DE ORIENTAÇÃO */
+      .orientacao-link {
+        color: var(--secondary-color);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.2s ease;
+      }
+      .orientacao-link:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+      }
+
       /* RODAPÉ */
       .footer {
         margin-top: auto;
@@ -439,6 +454,19 @@
         }
       }
 
+      // Formatar orientação: se for link http/https, exibe como clicável
+      function formatOrientacao(orientacao) {
+        if (!orientacao) return '-';
+
+        const valor = orientacao.toString().trim();
+
+        if (/^https?:\/\//i.test(valor)) {
+          return `<a href="${valor}" target="_blank" rel="noopener noreferrer" class="orientacao-link"><i class="fas fa-arrow-up-right-from-square"></i> CLIQUE AQUI PARA ACESSAR O PASSO A PASSO E ATIVAR A SUA CONTA</a>`;
+        }
+
+        return valor;
+      }
+
       // Criar tabela de resultados
       function createResultTable(dados) {
         if (!dados || dados.length === 0) return null;
@@ -476,7 +504,7 @@
               <td>${item.cpf || '-'}</td>
               <td>${item.nome || '-'}</td>
               <td>${item.agencia || '-'}</td>
-              <td>${item.orientacao || '-'}</td>
+              <td>${formatOrientacao(item.orientacao)}</td>
             </tr>
           `;
         });
